@@ -5,9 +5,9 @@ name: Node.js CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, schema_validator ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, schema_validator ]
 
 jobs:
   build:
