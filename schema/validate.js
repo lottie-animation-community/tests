@@ -1,3 +1,12 @@
+/**
+ * This retrieves all files located on the examples folder, then iterates
+ * over each file and validates it conforms to the json schema defined on
+ * the index.js file.
+ * If one or more of the files is not well formed, it calls the failed
+ * method, listing all files that didn't pass the validation and
+ * their errors.
+ */
+
 const fs = require('fs');
 const core = require('@actions/core');
 const github = require('@actions/github');
