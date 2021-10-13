@@ -5,26 +5,24 @@ name: Node.js CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, schema_validator ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, schema_validator ]
 
 jobs:
   build:
 
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [12.x, 14.x, 16.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-
+    defaults:
+      run:
+        working-directory: ./schema
     steps:
     - uses: actions/checkout@v2
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v2
+    - name: Use Node.js 16.x
+      uses: actions/cache@v2
       with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
+        path: ~/.npm
+        key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
     - run: npm ci
-    - run: npm run
+    - run: npm run validate

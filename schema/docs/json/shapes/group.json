@@ -1,0 +1,80 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "mn": {
+      "title": "Match Name",
+      "description": "After Effect's Match Name. Used for expressions.",
+      "type": "string"
+    },
+    "nm": {
+      "title": "Name",
+      "description": "After Effect's Name. Used for expressions.",
+      "type": "string"
+    },
+    "ty": {
+      "title": "Type",
+      "description": "Shape content type.",
+      "type": "string",
+      "const": "gr"
+    },
+    "np": {
+      "title": "Number of Properties",
+      "description": "Group number of properties. Used for expressions.",
+      "type": "number"
+    },
+    "it": {
+      "title": "Items",
+      "description": "Group list of items",
+      "items": {
+        "oneOf": [
+          {
+            "$ref": "#/shapes/shape"
+          },
+          {
+            "$ref": "#/shapes/rect"
+          },
+          {
+            "$ref": "#/shapes/ellipse"
+          },
+          {
+            "$ref": "#/shapes/star"
+          },
+          {
+            "$ref": "#/shapes/fill"
+          },
+          {
+            "$ref": "#/shapes/gFill"
+          },
+          {
+            "$ref": "#/shapes/gStroke"
+          },
+          {
+            "$ref": "#/shapes/stroke"
+          },
+          {
+            "$ref": "#/shapes/merge"
+          },
+          {
+            "$ref": "#/shapes/trim"
+          },
+          {
+            "$ref": "#/shapes/group"
+          },
+          {
+            "$ref": "#/shapes/round"
+          },
+          {
+            "$ref": "#/shapes/repeater"
+          },
+          {
+            "$ref": "#/shapes/transform"
+          }
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    }
+  },
+  "required": ["it", "ty"]
+}
