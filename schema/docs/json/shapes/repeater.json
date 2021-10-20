@@ -59,7 +59,7 @@
       "type": "object",
       "allOf":[
         {
-          "$ref": "#/helpers/transform",
+          "$ref": "#/helpers/transform"
         },
         {
           "type": "object",
