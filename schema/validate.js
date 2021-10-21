@@ -51,8 +51,10 @@ function fileProcessed() {
 }
 
 fs.readdir(examplesDirectory, (err, files) => {
-  totalFiles = files.length;
   files.forEach(fileName => {
-      fs.readFile(examplesDirectory + fileName,  'utf8',  (error, data) => validateFile(error, data, fileName));
+      if (fileName.indexOf('.json') !== -1) {
+        totalFiles += 1;
+        fs.readFile(examplesDirectory + fileName,  'utf8',  (error, data) => validateFile(error, data, fileName));
+      }
   });
 });
