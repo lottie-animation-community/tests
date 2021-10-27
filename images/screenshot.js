@@ -37,6 +37,8 @@ const loadAnimation = async (renderSettings) => new Promise((resolve, reject) =>
   const anim = lottie.loadAnimation(animData);
   anim.addEventListener('DOMLoaded', () => {
     resolve(anim);
+    elem.style.width = `${anim.animationData.w}px`;
+    elem.style.height = `${anim.animationData.h}px`;
   });
   anim.onError = (errorType) => {
     reject(errorType);
