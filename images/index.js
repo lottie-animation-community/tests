@@ -1,3 +1,9 @@
+/**
+ * This traverses all json files located on the examples folder, then iterates
+ * over each file and opens a puppeteer page to a screenshot of all frames
+ * combined in a single page.
+ */
+
 const puppeteer = require('puppeteer');
 const express = require('express');
 const fs = require('fs');
