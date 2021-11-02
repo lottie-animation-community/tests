@@ -55,7 +55,6 @@ const createSVGSnapshot = (element, container, width, height) => {
   iframeElement.contentWindow.document.open();
   iframeElement.contentWindow.document.write(innerContent);
   iframeElement.contentWindow.document.close();
-  return iframeElement;
 };
 
 const createCanvasSnapshot = (element, container, width, height) => {
