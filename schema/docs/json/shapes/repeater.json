@@ -56,8 +56,43 @@
     "tr": {
       "title": "Transform",
       "description": "Transform values for each repeater copy",
-      "$ref": "#/helpers/transform",
-      "type": "object"
+      "type": "object",
+      "allOf":[
+        {
+          "$ref": "#/helpers/transform"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "so": {
+              "title": "Start Opacity",
+              "oneOf": [
+                {
+                  "$ref": "#/properties/value"
+                },
+                {
+                  "$ref": "#/properties/multiDimensionalKeyframed"
+                }
+              ],
+              "default": {"a":0, "k":100},
+              "type": "object"
+            },
+            "eo": {
+              "title": "End Opacity",
+              "oneOf": [
+                {
+                  "$ref": "#/properties/value"
+                },
+                {
+                  "$ref": "#/properties/multiDimensionalKeyframed"
+                }
+              ],
+              "default": {"a":0, "k":100},
+              "type": "object"
+            }
+          }
+        }
+      ]
     }
   },
   "required": ["c", "o", "tr", "ty"]
