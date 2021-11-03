@@ -14,6 +14,7 @@ const { promises: { readFile } } = require('fs');
 const examplesDirectory = '../examples/';
 const destinationDirectory = './screenshots';
 const md5Directory = './md5sum/lottie_web';
+
 if (!fs.existsSync(destinationDirectory)) {
   fs.mkdirSync(destinationDirectory);
 }
