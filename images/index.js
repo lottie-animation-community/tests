@@ -63,13 +63,12 @@ const getSettings = async () => {
     ...defaultSettings,
     ...commandLineArgs(opts),
   };
-  console.log(settings);
   return settings;
 };
 
 const wait = (time) => new Promise((resolve) => setTimeout(resolve, time));
 
-const files = [
+const filesData = [
   {
     path: '/js/main.js',
     filePath: './js/main.js',
@@ -114,8 +113,9 @@ const files = [
   },
   {
     path: '/lottie.json',
-    // filePath: '../examples/rectangle.json',
-    filePath: './data.json',
+    // filePath: '../examples/image.json',
+    filePath: '../examples/rectangle.json',
+    // filePath: './data.json',
     type: 'json',
   },
   {
@@ -151,12 +151,12 @@ const getContentTypeHeader = (() => {
 
 const startServer = async () => {
   const app = express();
-  await Promise.all(files.map(async (file) => {
+  await Promise.all(filesData.map(async (file) => {
     const fileData = await readFile(file.filePath, getEncoding(file.type));
     app.get(file.path, async (req, res) => {
       res.writeHead(200, getContentTypeHeader(file.type));
       // TODO: comment line. Only for live updates.
-      const fileData = await readFile(file.filePath, getEncoding(file.type));
+      // const fileData = await readFile(file.filePath, getEncoding(file.type));
       res.end(fileData);
     });
     return file;

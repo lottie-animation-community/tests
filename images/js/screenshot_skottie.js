@@ -24,7 +24,7 @@ const getAnimationData = async (rendererSettings) => {
   return animData;
 };
 
-const createSkottiePlayer = async (canvasKit, animationData, canvas) => {
+const createSkottiePlayer = async (canvasKit, animationData, canvas, assets) => {
   // const { devicePixelRatio } = window; // TODO: check if using the pixel ratio is preferred.
   const devicePixelRatio = 1;
   canvas.width = devicePixelRatio * animationData.w; // eslint-disable-line no-param-reassign
@@ -32,7 +32,7 @@ const createSkottiePlayer = async (canvasKit, animationData, canvas) => {
   const surface = canvasKit.MakeCanvasSurface(canvas);
   const skcanvas = surface.getCanvas();
   const animation = canvasKit.MakeManagedAnimation(
-    JSON.stringify(animationData), {}, '',
+    JSON.stringify(animationData), assets, '',
   );
 
   const goToAndStop = (pos) => {
@@ -69,12 +69,31 @@ const iterateFrames = async (player, animationData, canvas, renderSettings) => {
   }
 };
 
+const getAssets = async (animationData, rendererSettings) => {
+  const assets = {
+
+  };
+  await Promise.all(
+    animationData.assets
+      .filter((asset) => asset.p && asset.u)
+      .map(async (asset) => {
+        const assetPathParts = rendererSettings.path.split('/');
+        assetPathParts.pop();
+        const assetPath = `${assetPathParts.join('/')}/`;
+        const assetData = await fetch(assetPath + asset.u + asset.p);
+        assets[asset.p] = await assetData.arrayBuffer();
+      }),
+  );
+  return assets;
+};
+
 const start = async (rendererSettings) => {
   try {
     const canvasKit = await loadSkottieModule();
     const animationData = await getAnimationData(rendererSettings);
     const canvas = await createCanvas(animationData);
-    const skottiePlayer = await createSkottiePlayer(canvasKit, animationData, canvas);
+    const assets = await getAssets(animationData, rendererSettings);
+    const skottiePlayer = await createSkottiePlayer(canvasKit, animationData, canvas, assets);
     await iterateFrames(skottiePlayer, animationData, canvas, rendererSettings);
   } catch (error) {
     console.log('ERROR'); // eslint-disable-line no-console

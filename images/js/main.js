@@ -6,7 +6,8 @@ const buildRenderSettings = async (searchParams) => {
     renderer: 'skottie',
     sampleRate: 1,
     resolution: 1,
-    path: 'lottie.json',
+    // path: 'lottie.json',
+    path: '../examples/image.json',
   };
   searchParams.forEach((value, key) => {
     defaultValues[key] = value;
