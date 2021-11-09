@@ -140,13 +140,13 @@ const getEncoding = (() => {
 })();
 
 const getContentTypeHeader = (() => {
-  const encodingMap = {
+  const contentTypeMap = {
     js: { 'Content-Type': 'application/javascript' },
     json: { 'Content-Type': 'application/json' },
     html: { 'Content-Type': 'text/html; charset=utf-8' },
     wasm: { 'Content-Type': 'application/wasm' },
   };
-  return (fileType) => encodingMap[fileType];
+  return (fileType) => contentTypeMap[fileType];
 })();
 
 const startServer = async () => {
