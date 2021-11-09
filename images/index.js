@@ -8,9 +8,13 @@ const puppeteer = require('puppeteer');
 const express = require('express');
 const fs = require('fs');
 const commandLineArgs = require('command-line-args');
+const md5File = require('md5-file');
+const { promises: { readFile } } = require('fs');
 
 const examplesDirectory = '../examples/';
 const destinationDirectory = './screenshots';
+const md5Directory = './md5sum/lottie_web';
+
 if (!fs.existsSync(destinationDirectory)) {
   fs.mkdirSync(destinationDirectory);
 }
@@ -65,26 +69,26 @@ const getSettings = async () => {
 const wait = (time) => new Promise((resolve) => setTimeout(resolve, time));
 
 const startServer = async () => {
-  const lottieJS = fs.readFileSync('node_modules/lottie-web/build/player/lottie.min.js', 'utf8');
-  const screenshotJS = fs.readFileSync('screenshot.js', 'utf8');
-  const driverHTML = fs.readFileSync('screenshot.html', 'utf8');
-  const lottieJSON = fs.readFileSync('../examples/rectangle.json', 'utf8');
+  const lottieJS = await readFile('node_modules/lottie-web/build/player/lottie.min.js', 'utf8');
+  const screenshotJS = await readFile('screenshot.js', 'utf8');
+  const driverHTML = await readFile('screenshot.html', 'utf8');
+  const lottieJSON = await readFile('../examples/rectangle.json', 'utf8');
   const app = express();
   app.get('/screenshot.html', (req, res) => res.send(driverHTML));
-  app.get('/screenshot_live.html', (req, res) => {
-    const file = fs.readFileSync('screenshot.html', 'utf8');
+  app.get('/screenshot_live.html', async (req, res) => {
+    const file = await readFile('screenshot.html', 'utf8');
     res.send(file);
   });
   app.get('/lottie.js', (req, res) => res.send(lottieJS));
   app.get('/screenshot.js', (req, res) => res.send(screenshotJS));
   app.get('/lottie.json', (req, res) => res.send(lottieJSON));
-  app.get('/*', (req, res) => {
+  app.get('/*', async (req, res) => {
     try {
       if (req.originalUrl.indexOf('.json') !== -1) {
-        const file = fs.readFileSync(`..${req.originalUrl}`, 'utf8');
+        const file = await readFile(`..${req.originalUrl}`, 'utf8');
         res.send(file);
       } else {
-        const data = fs.readFileSync(`..${req.originalUrl}`);
+        const data = await readFile(`..${req.originalUrl}`);
         res.writeHead(200, { 'Content-Type': 'image/jpeg' });
         res.end(data);
       }
@@ -109,12 +113,12 @@ const startPage = async (browser, settings, path) => {
   return page;
 };
 
-const createFilmStrim = async (page, path) => {
+const createFilmStrip = async (page, path) => {
   await page.waitForFunction('window._finished === true', {
     timeout: 20000,
   });
   await page.screenshot({
-    path: `${destinationDirectory}/${path}.png`,
+    path,
     fullPage: true,
   });
 };
@@ -131,9 +135,33 @@ const getDirFiles = async (directory) => (
   })
 );
 
+const getFileAsString = async (path) => {
+  try {
+    const fileBuffer = await readFile(path);
+    return fileBuffer.toString();
+  } catch (err) {
+    return '';
+  }
+};
+
+const checkMD5Sum = async (fileName, filePath) => {
+  const md5FilePath = `${md5Directory}/${fileName}.md5`;
+  const md5StoredValue = await getFileAsString(md5FilePath);
+  if (!md5StoredValue) {
+    // It's a new file.. Check how to commit the new value.
+  } else {
+    const md5Value = await md5File(filePath);
+    if (md5Value !== md5StoredValue) {
+      // The file has changed. Should not allow the commit.
+    }
+  }
+};
+
 async function processPage(browser, settings, directory, file) {
   const page = await startPage(browser, settings, directory + file);
-  await createFilmStrim(page, file);
+  const filePath = `${destinationDirectory}/${file}.png`;
+  await createFilmStrip(page, filePath);
+  await checkMD5Sum(file, filePath);
 }
 
 const iteratePages = async (browser, settings) => {
