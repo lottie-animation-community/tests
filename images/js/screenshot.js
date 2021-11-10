@@ -1,5 +1,6 @@
 import canvasSnapshot from './canvasSnapshot.js'; // eslint-disable-line import/extensions
 import wait from './wait.js'; // eslint-disable-line import/extensions
+import puppeteerHelper from './puppeteerHelper.js'; // eslint-disable-line import/extensions
 
 const loadAnimation = async (renderSettings) => new Promise((resolve, reject) => {
   const elem = document.getElementById('lottie');
@@ -42,27 +43,42 @@ const createSVGSnapshot = (element, container, width, height) => {
   iframeElement.contentWindow.document.open();
   iframeElement.contentWindow.document.write(innerContent);
   iframeElement.contentWindow.document.close();
+  return iframeElement;
 };
 
 const takeSnapshots = async (anim, renderSettings) => {
   let currentFrame = 0;
   const sampleRate = renderSettings.sampleRate > 0 ? renderSettings.sampleRate : 1;
-  const elem = document.getElementById('lottie');
+  const container = document.getElementById('lottie');
   const snapshotsContainer = document.getElementById('snapshotsContainer');
   const width = anim.animationData.w * renderSettings.resolution;
   const height = anim.animationData.h * renderSettings.resolution;
 
   while (currentFrame < anim.totalFrames) {
+    // Disabling rule because execution can't be parallelized
+    /* eslint-disable no-await-in-loop */
     anim.resize();
-    anim.goToAndStop(currentFrame);
+    anim.goToAndStop(currentFrame, true);
+    let element;
     if (renderSettings.renderer === 'svg') {
-      createSVGSnapshot(elem, snapshotsContainer, width, height);
+      element = createSVGSnapshot(container, snapshotsContainer, width, height);
     } else if (renderSettings.renderer === 'canvas') {
-      const canvas = elem.getElementsByTagName('canvas')[0];
-      canvasSnapshot(canvas, snapshotsContainer, width, height);
+      const canvas = container.getElementsByTagName('canvas')[0];
+      element = canvasSnapshot(canvas, snapshotsContainer, width, height);
     }
     currentFrame += 1 / sampleRate;
-    await wait(1); // eslint-disable-line no-await-in-loop
+    if (Number(renderSettings.individualAssets) === 0) {
+      await wait(1);
+    } else {
+      await puppeteerHelper.submitAndWaitForResponse(
+        currentFrame,
+        currentFrame === anim.totalFrames,
+        width,
+        height,
+      );
+      element.remove();
+    }
+    /* eslint-enable no-await-in-loop */
   }
 };
 
