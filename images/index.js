@@ -48,7 +48,7 @@ const getSettings = async () => {
     {
       name: 'renderer',
       alias: 'r',
-      type: (value) => (['svg', 'canvas'].includes(value) ? value : 'svg'),
+      type: (value) => (['svg', 'canvas', 'skottie'].includes(value) ? value : 'svg'),
       description: 'The renderer to use',
     },
   ];
@@ -68,20 +68,100 @@ const getSettings = async () => {
 
 const wait = (time) => new Promise((resolve) => setTimeout(resolve, time));
 
+const filesData = [
+  {
+    path: '/js/main.js',
+    filePath: './js/main.js',
+    type: 'js',
+
+  },
+  {
+    path: '/js/screenshot.js',
+    filePath: './js/screenshot.js',
+    type: 'js',
+
+  },
+  {
+    path: '/js/screenshot_skottie.js',
+    filePath: './js/screenshot_skottie.js',
+    type: 'js',
+
+  },
+  {
+    path: '/js/canvasSnapshot.js',
+    filePath: './js/canvasSnapshot.js',
+    type: 'js',
+
+  },
+  {
+    path: '/js/wait.js',
+    filePath: './js/wait.js',
+    type: 'js',
+
+  },
+  {
+    path: '/lottie.js',
+    filePath: 'node_modules/lottie-web/build/player/lottie.min.js',
+    type: 'js',
+
+  },
+  {
+    path: '/canvaskit.js',
+    filePath: 'node_modules/canvaskit-wasm/bin/full/canvaskit.js',
+    type: 'js',
+
+  },
+  {
+    path: '/lottie.json',
+    // filePath: '../examples/image.json',
+    filePath: '../examples/rectangle.json',
+    // filePath: './data.json',
+    type: 'json',
+  },
+  {
+    path: '/screenshot.html',
+    filePath: './screenshot.html',
+    type: 'html',
+  },
+  {
+    path: '/canvasKit.wasm',
+    filePath: 'node_modules/canvaskit-wasm/bin/full/canvaskit.wasm',
+    type: 'wasm',
+  },
+];
+
+const getEncoding = (() => {
+  const encodingMap = {
+    js: 'utf8',
+    json: 'utf8',
+    html: 'utf8',
+  };
+  return (fileType) => encodingMap[fileType];
+})();
+
+const getContentTypeHeader = (() => {
+  const contentTypeMap = {
+    js: { 'Content-Type': 'application/javascript' },
+    json: { 'Content-Type': 'application/json' },
+    html: { 'Content-Type': 'text/html; charset=utf-8' },
+    wasm: { 'Content-Type': 'application/wasm' },
+  };
+  return (fileType) => contentTypeMap[fileType];
+})();
+
 const startServer = async () => {
-  const lottieJS = await readFile('node_modules/lottie-web/build/player/lottie.min.js', 'utf8');
-  const screenshotJS = await readFile('screenshot.js', 'utf8');
-  const driverHTML = await readFile('screenshot.html', 'utf8');
-  const lottieJSON = await readFile('../examples/rectangle.json', 'utf8');
   const app = express();
-  app.get('/screenshot.html', (req, res) => res.send(driverHTML));
-  app.get('/screenshot_live.html', async (req, res) => {
-    const file = await readFile('screenshot.html', 'utf8');
-    res.send(file);
-  });
-  app.get('/lottie.js', (req, res) => res.send(lottieJS));
-  app.get('/screenshot.js', (req, res) => res.send(screenshotJS));
-  app.get('/lottie.json', (req, res) => res.send(lottieJSON));
+  await Promise.all(filesData.map(async (file) => {
+    const fileData = await readFile(file.filePath, getEncoding(file.type));
+    app.get(file.path, async (req, res) => {
+      res.writeHead(200, getContentTypeHeader(file.type));
+      // TODO: comment line. Only for live updates.
+      // const fileData = await readFile(file.filePath, getEncoding(file.type));
+      res.end(fileData);
+    });
+    return file;
+  }));
+
   app.get('/*', async (req, res) => {
     try {
       if (req.originalUrl.indexOf('.json') !== -1) {

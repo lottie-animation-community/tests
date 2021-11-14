@@ -1,18 +1,5 @@
-const wait = (time = 1) => new Promise((resolve) => setTimeout(resolve, time));
-
-const buildRenderSettings = async (searchParams) => {
-  const defaultValues = {
-    renderer: 'svg',
-    sampleRate: 1,
-    resolution: 1,
-    path: 'lottie.json',
-  };
-  searchParams.forEach((value, key) => {
-    defaultValues[key] = value;
-  });
-
-  return defaultValues;
-};
+import canvasSnapshot from './canvasSnapshot.js'; // eslint-disable-line import/extensions
+import wait from './wait.js'; // eslint-disable-line import/extensions
 
 const loadAnimation = async (renderSettings) => new Promise((resolve, reject) => {
   const elem = document.getElementById('lottie');
@@ -57,28 +44,6 @@ const createSVGSnapshot = (element, container, width, height) => {
   iframeElement.contentWindow.document.close();
 };
 
-const createCanvasSnapshot = (element, container, width, height) => {
-  const innerContent = element.getElementsByTagName('canvas')[0];
-  const canvasElement = document.createElement('canvas');
-  container.appendChild(canvasElement);
-  canvasElement.width = width;
-  canvasElement.height = height;
-  canvasElement.style.width = `${width}px`;
-  canvasElement.style.height = `${height}px`;
-  const canvasContext = canvasElement.getContext('2d');
-  canvasContext.drawImage(
-    innerContent,
-    0,
-    0,
-    innerContent.width,
-    innerContent.height,
-    0,
-    0,
-    canvasElement.width,
-    canvasElement.height,
-  );
-};
-
 const takeSnapshots = async (anim, renderSettings) => {
   let currentFrame = 0;
   const sampleRate = renderSettings.sampleRate > 0 ? renderSettings.sampleRate : 1;
@@ -93,24 +58,25 @@ const takeSnapshots = async (anim, renderSettings) => {
     if (renderSettings.renderer === 'svg') {
       createSVGSnapshot(elem, snapshotsContainer, width, height);
     } else if (renderSettings.renderer === 'canvas') {
-      createCanvasSnapshot(elem, snapshotsContainer, width, height);
+      const canvas = elem.getElementsByTagName('canvas')[0];
+      canvasSnapshot(canvas, snapshotsContainer, width, height);
     }
     currentFrame += 1 / sampleRate;
     await wait(1); // eslint-disable-line no-await-in-loop
   }
 };
 
-const start = async () => {
-  const url = new URL(window.location);
-  const renderSettings = await buildRenderSettings(url.searchParams);
-  const anim = await loadAnimation(renderSettings);
-  await takeSnapshots(anim, renderSettings);
-  window._finished = true; // eslint-disable-line no-underscore-dangle
+const start = async (renderSettings) => {
+  try {
+    const anim = await loadAnimation(renderSettings);
+    await takeSnapshots(anim, renderSettings);
+    window._finished = true; // eslint-disable-line no-underscore-dangle
+  } catch (err) {
+    console.log('ERROR'); // eslint-disable-line no-console
+    console.log(err.message); // eslint-disable-line no-console
+  }
 };
 
-try {
-  start();
-} catch (err) {
-  console.log('ERROR'); // eslint-disable-line no-console
-  console.log(err.message); // eslint-disable-line no-console
-}
+export default {
+  start,
+};
