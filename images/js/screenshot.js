@@ -1,5 +1,5 @@
 import canvasSnapshot from './canvasSnapshot.js'; // eslint-disable-line import/extensions
-import wait from './wait.js'; // eslint-disable-line import/extensions
+import wait from './wait.js'; // eslint-disable-line import/extensions:images/js/screenshot.js
 import puppeteerHelper from './puppeteerHelper.js'; // eslint-disable-line import/extensions
 
 const loadAnimation = async (renderSettings) => new Promise((resolve, reject) => {
