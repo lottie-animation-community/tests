@@ -43,6 +43,7 @@ const createSkottiePlayer = async (canvasKit, animationData, canvas, assets) => 
       animationData.w * devicePixelRatio,
       animationData.h * devicePixelRatio,
     );
+    skcanvas.clear(canvasKit.Color(0, 0, 0, 0.0));
     animation.render(skcanvas, bounds);
     surface.flush();
   };
