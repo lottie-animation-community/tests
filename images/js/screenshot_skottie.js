@@ -74,7 +74,7 @@ const iterateFrames = async (player, animationData, canvas, renderSettings) => {
     } else {
       await puppeteerHelper.submitAndWaitForResponse(
         currentFrame,
-        currentFrame === animationData.tf,
+        currentFrame === totalFrames - 1,
         width,
         height,
       );
