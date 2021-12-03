@@ -20,6 +20,8 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Use Node.js 16.x
+      env:
+        GOOGLE_CLOUD_STORAGE: ${{ secrets.GOOGLE_CLOUD_STORAGE }}
       uses: actions/cache@v2
       with:
         path: ~/.npm

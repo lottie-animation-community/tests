@@ -6,6 +6,7 @@ let storage;
 const initialize = () => {
   try {
     const key = process.env.GOOGLE_CLOUD_STORAGE;
+    console.log('key', key);
     const keyString = Buffer.from(key, 'base64').toString('ascii');
     const storageKey = JSON.parse(keyString);
     storage = new Storage({
@@ -13,15 +14,20 @@ const initialize = () => {
       projectId: storageKey.project_id,
     });
   } catch (error) {
-    console.log('Error when initializing Google Cloud');
+    console.log('Could not initialize Google Cloud');
     console.log(error);
   }
 };
 
 const uploadAsset = async (filePath, destination) => {
-  await storage.bucket(bucketName).upload(filePath, {
-    destination,
-  });
+  try {
+    await storage.bucket(bucketName).upload(filePath, {
+      destination,
+    });
+  } catch (error) {
+    console.log('Could not upload asset to Google Cloud');
+    console.log(error);
+  }
 };
 
 const googleCloudHelper = {
