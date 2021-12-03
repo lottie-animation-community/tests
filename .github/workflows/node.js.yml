@@ -5,9 +5,9 @@ name: Node.js CI
 
 on:
   push:
-    branches: [ main, schema_validator ]
+    branches: [ main, schema_validator, gcloud_integration ]
   pull_request:
-    branches: [ main, schema_validator ]
+    branches: [ main, schema_validator, gcloud_integration ]
 
 jobs:
   build:
@@ -16,7 +16,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: ./schema
+        working-directory: ./images
     steps:
     - uses: actions/checkout@v2
     - name: Use Node.js 16.x
