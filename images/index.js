@@ -10,6 +10,7 @@ const fs = require('fs');
 const commandLineArgs = require('command-line-args');
 const md5File = require('md5-file');
 const { promises: { readFile } } = require('fs');
+const googleCloudHelper = require('./js/googleCloud');
 
 const examplesDirectory = '../examples/';
 const destinationDirectory = './screenshots';
@@ -239,9 +240,11 @@ const checkMD5Sum = async (fileName, filePath) => {
 
 async function processPage(browser, settings, directory, file) {
   const page = await startPage(browser, settings, directory + file);
-  const filePath = `${destinationDirectory}/${file}.png`;
+  const fileName = `${file}.png`;
+  const filePath = `${destinationDirectory}/${fileName}`;
   await createFilmStrip(page, filePath);
   await checkMD5Sum(file, filePath);
+  await googleCloudHelper.uploadAsset(filePath, fileName);
 }
 
 const iteratePages = async (browser, settings) => {
@@ -256,6 +259,7 @@ const iteratePages = async (browser, settings) => {
 const takeImageStrip = async () => {
   try {
     await startServer();
+    await googleCloudHelper.initialize();
     await wait(500);
     const settings = await getSettings();
     const browser = await getBrowser();
