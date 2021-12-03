@@ -14,16 +14,13 @@ jobs:
 
     runs-on: ubuntu-latest
     env:
-      TEST_TEST2: HERNAN_TEST2
+      GOOGLE_CLOUD_STORAGE: ${{ secrets.GOOGLE_CLOUD_STORAGE }}
     defaults:
       run:
         working-directory: ./images
     steps:
     - uses: actions/checkout@v2
     - name: Use Node.js 16.x
-      env:
-        TEST_TEST: HERNAN_TEST
-        GOOGLE_CLOUD_STORAGE: ${{ secrets.GOOGLE_CLOUD_STORAGE }}
       uses: actions/cache@v2
       with:
         path: ~/.npm
