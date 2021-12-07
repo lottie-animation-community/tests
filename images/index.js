@@ -247,7 +247,11 @@ const createBridgeHelper = async (page) => {
   const messageHandler = (event) => {
     resolveScoped(event);
   };
+  console.log('createBridgeHelper', page);
   await page.exposeFunction('onMessageReceivedEvent', messageHandler);
+  await wait(1000);
+  console.log('createBridgeHelper2');
+  await wait(1000);
   const waitForMessage = () => new Promise((resolve) => {
     resolveScoped = resolve;
   });
@@ -256,6 +260,7 @@ const createBridgeHelper = async (page) => {
       window.continueExecution();
     });
   };
+  console.log('createBridgeHelper3');
   return {
     waitForMessage,
     continueExecution,
@@ -266,7 +271,7 @@ const createIndividualAssets = async (page, fileName, extension, renderer) => {
   console.log('createIndividualAssets');
   const filePath = `${destinationDirectory}/${fileName}`;
   let isLastFrame = false;
-  console.log('createIndividualAssets:1');
+  console.log('createIndividualAssets:1', page);
   const bridgeHelper = await (createBridgeHelper(page));
   console.log('createIndividualAssets:2');
   while (!isLastFrame) {
@@ -274,20 +279,16 @@ const createIndividualAssets = async (page, fileName, extension, renderer) => {
     /* eslint-disable no-await-in-loop */
     console.log('createIndividualAssets:3');
     const message = await bridgeHelper.waitForMessage();
-    console.log('createIndividualAssets:4');
     await page.setViewport({
       width: message.width,
       height: message.height,
     });
-    console.log('createIndividualAssets:5');
     const fileNumber = message.currentFrame.toString().padStart(5, '0');
     const localDestinationPath = `${filePath}_${fileNumber}${extension}`;
-    console.log('createIndividualAssets:6');
     await page.screenshot({
       path: localDestinationPath,
       fullPage: false,
     });
-    console.log('createIndividualAssets:7');
     const remoteDestinationPath = `${renderer}/${fileName}_${fileNumber}${extension}`;
     await googleCloudHelper.uploadAsset(localDestinationPath, remoteDestinationPath);
     await bridgeHelper.continueExecution();
