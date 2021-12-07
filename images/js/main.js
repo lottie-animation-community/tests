@@ -3,9 +3,10 @@ import skottieScreenshot from './screenshot_skottie.js'; // eslint-disable-line 
 
 const buildRenderSettings = async (searchParams) => {
   const defaultValues = {
-    renderer: 'skottie',
+    renderer: 'svg',
     sampleRate: 1,
     resolution: 1,
+    individualAssets: 0,
     // path: 'lottie.json',
     path: '../examples/image.json',
   };
