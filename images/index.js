@@ -244,18 +244,25 @@ const createFilmStrip = async (page, fileName, extension, renderer) => {
 
 const createBridgeHelper = async (page) => {
   let resolveScoped;
+  let isProcessStarted = false;
   const messageHandler = (event) => {
-    console.log('messageHandler', event);
     resolveScoped(event);
   };
-  console.log('createBridgeHelper');
   try {
     await page.exposeFunction('onMessageReceivedEvent', messageHandler);
   } catch (error) {
     console.log('ERROR', error);
   }
-  console.log('createBridgeHelper2');
+  const startProcess = async () => {
+    isProcessStarted = true;
+    page.evaluate(() => {
+      window.startProcess();
+    });
+  };
   const waitForMessage = () => new Promise((resolve) => {
+    if (!isProcessStarted) {
+      startProcess();
+    }
     resolveScoped = resolve;
   });
   const continueExecution = async () => {
@@ -263,7 +270,6 @@ const createBridgeHelper = async (page) => {
       window.continueExecution();
     });
   };
-  console.log('createBridgeHelper3');
   return {
     waitForMessage,
     continueExecution,
@@ -271,18 +277,13 @@ const createBridgeHelper = async (page) => {
 };
 
 const createIndividualAssets = async (page, fileName, extension, renderer) => {
-  console.log('createIndividualAssets');
   const filePath = `${destinationDirectory}/${fileName}`;
   let isLastFrame = false;
-  console.log('createIndividualAssets:1');
   const bridgeHelper = await (createBridgeHelper(page));
-  console.log('createIndividualAssets:2');
   while (!isLastFrame) {
     // Disabling rule because execution can't be parallelized
     /* eslint-disable no-await-in-loop */
-    console.log('createIndividualAssets:3');
     const message = await bridgeHelper.waitForMessage();
-    console.log('createIndividualAssets:4');
     await page.setViewport({
       width: message.width,
       height: message.height,
@@ -314,7 +315,6 @@ const getDirFiles = async (directory) => (
 );
 
 async function processPage(browser, settings, directory, fileName) {
-  console.log('PROCESS PAGE -');
   const page = await startPage(browser, settings, directory + fileName);
   const fileNameWithoutExtension = fileName.replace(/\.[^/.]+$/, '');
   const extension = '.png';
@@ -337,12 +337,10 @@ const iteratePages = async (browser, settings) => {
 const takeImageStrip = async () => {
   try {
     await startServer();
-    console.log('init');
     await googleCloudHelper.initialize();
     await wait(500);
     const settings = await getSettings();
     const browser = await getBrowser();
-    console.log('iteratePages');
     await iteratePages(browser, settings);
     await browser.close();
     process.exit(0);
