@@ -309,7 +309,7 @@ const getDirFiles = async (directory) => (
 );
 
 async function processPage(browser, settings, directory, fileName) {
-  console.log('PROCESS PAGE');
+  console.log('PROCESS PAGE -');
   const page = await startPage(browser, settings, directory + fileName);
   const fileNameWithoutExtension = fileName.replace(/\.[^/.]+$/, '');
   const extension = '.png';
@@ -332,10 +332,12 @@ const iteratePages = async (browser, settings) => {
 const takeImageStrip = async () => {
   try {
     await startServer();
+    console.log('init');
     await googleCloudHelper.initialize();
     await wait(500);
     const settings = await getSettings();
     const browser = await getBrowser();
+    console.log('iteratePages');
     await iteratePages(browser, settings);
     await browser.close();
     process.exit(0);
