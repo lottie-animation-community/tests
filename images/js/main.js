@@ -29,11 +29,10 @@ const start = async () => {
 };
 
 window.startProcess = () => {
-  console.log('startProcessstartProcess');
   try {
     start();
   } catch (err) {
     console.log('ERROR'); // eslint-disable-line no-console
     console.log(err.message); // eslint-disable-line no-console
   }
-}
+};

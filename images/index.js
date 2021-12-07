@@ -248,11 +248,7 @@ const createBridgeHelper = async (page) => {
   const messageHandler = (event) => {
     resolveScoped(event);
   };
-  try {
-    await page.exposeFunction('onMessageReceivedEvent', messageHandler);
-  } catch (error) {
-    console.log('ERROR', error);
-  }
+  await page.exposeFunction('onMessageReceivedEvent', messageHandler);
   const startProcess = async () => {
     isProcessStarted = true;
     page.evaluate(() => {
