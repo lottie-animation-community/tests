@@ -6,7 +6,6 @@ let storage;
 const initialize = () => {
   try {
     const key = process.env.GOOGLE_CLOUD_STORAGE;
-    console.log('key', key);
     const keyString = Buffer.from(key, 'base64').toString('ascii');
     const storageKey = JSON.parse(keyString);
     storage = new Storage({
