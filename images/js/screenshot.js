@@ -70,6 +70,7 @@ const takeSnapshots = async (anim, renderSettings) => {
     if (Number(renderSettings.individualAssets) === 0) {
       await wait(1);
     } else {
+      await wait(1000);
       await puppeteerHelper.submitAndWaitForResponse(
         currentFrame,
         currentFrame === anim.totalFrames,

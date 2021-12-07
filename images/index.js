@@ -245,13 +245,16 @@ const createFilmStrip = async (page, fileName, extension, renderer) => {
 const createBridgeHelper = async (page) => {
   let resolveScoped;
   const messageHandler = (event) => {
+    console.log('messageHandler', event);
     resolveScoped(event);
   };
-  console.log('createBridgeHelper', page);
-  await page.exposeFunction('onMessageReceivedEvent', messageHandler);
-  await wait(1000);
+  console.log('createBridgeHelper');
+  try {
+    await page.exposeFunction('onMessageReceivedEvent', messageHandler);
+  } catch (error) {
+    console.log('ERROR', error);
+  }
   console.log('createBridgeHelper2');
-  await wait(1000);
   const waitForMessage = () => new Promise((resolve) => {
     resolveScoped = resolve;
   });
@@ -271,7 +274,7 @@ const createIndividualAssets = async (page, fileName, extension, renderer) => {
   console.log('createIndividualAssets');
   const filePath = `${destinationDirectory}/${fileName}`;
   let isLastFrame = false;
-  console.log('createIndividualAssets:1', page);
+  console.log('createIndividualAssets:1');
   const bridgeHelper = await (createBridgeHelper(page));
   console.log('createIndividualAssets:2');
   while (!isLastFrame) {
@@ -279,6 +282,7 @@ const createIndividualAssets = async (page, fileName, extension, renderer) => {
     /* eslint-disable no-await-in-loop */
     console.log('createIndividualAssets:3');
     const message = await bridgeHelper.waitForMessage();
+    console.log('createIndividualAssets:4');
     await page.setViewport({
       width: message.width,
       height: message.height,
