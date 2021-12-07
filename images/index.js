@@ -266,27 +266,30 @@ const createIndividualAssets = async (page, fileName, extension, renderer) => {
   console.log('createIndividualAssets');
   const filePath = `${destinationDirectory}/${fileName}`;
   let isLastFrame = false;
+  console.log('createIndividualAssets:1');
   const bridgeHelper = await (createBridgeHelper(page));
+  console.log('createIndividualAssets:2');
   while (!isLastFrame) {
     // Disabling rule because execution can't be parallelized
     /* eslint-disable no-await-in-loop */
+    console.log('createIndividualAssets:3');
     const message = await bridgeHelper.waitForMessage();
+    console.log('createIndividualAssets:4');
     await page.setViewport({
       width: message.width,
       height: message.height,
     });
+    console.log('createIndividualAssets:5');
     const fileNumber = message.currentFrame.toString().padStart(5, '0');
     const localDestinationPath = `${filePath}_${fileNumber}${extension}`;
-    console.log('createIndividualAssets:1');
+    console.log('createIndividualAssets:6');
     await page.screenshot({
       path: localDestinationPath,
       fullPage: false,
     });
-    console.log('createIndividualAssets:2');
+    console.log('createIndividualAssets:7');
     const remoteDestinationPath = `${renderer}/${fileName}_${fileNumber}${extension}`;
-    console.log('createIndividualAssets:3');
     await googleCloudHelper.uploadAsset(localDestinationPath, remoteDestinationPath);
-    console.log('createIndividualAssets:4');
     await bridgeHelper.continueExecution();
     isLastFrame = message.isLast;
     /* eslint-enable no-await-in-loop */
