@@ -263,6 +263,7 @@ const createBridgeHelper = async (page) => {
 };
 
 const createIndividualAssets = async (page, fileName, extension, renderer) => {
+  console.log('createIndividualAssets');
   const filePath = `${destinationDirectory}/${fileName}`;
   let isLastFrame = false;
   const bridgeHelper = await (createBridgeHelper(page));
@@ -276,12 +277,16 @@ const createIndividualAssets = async (page, fileName, extension, renderer) => {
     });
     const fileNumber = message.currentFrame.toString().padStart(5, '0');
     const localDestinationPath = `${filePath}_${fileNumber}${extension}`;
+    console.log('createIndividualAssets:1');
     await page.screenshot({
       path: localDestinationPath,
       fullPage: false,
     });
+    console.log('createIndividualAssets:2');
     const remoteDestinationPath = `${renderer}/${fileName}_${fileNumber}${extension}`;
+    console.log('createIndividualAssets:3');
     await googleCloudHelper.uploadAsset(localDestinationPath, remoteDestinationPath);
+    console.log('createIndividualAssets:4');
     await bridgeHelper.continueExecution();
     isLastFrame = message.isLast;
     /* eslint-enable no-await-in-loop */
@@ -301,6 +306,7 @@ const getDirFiles = async (directory) => (
 );
 
 async function processPage(browser, settings, directory, fileName) {
+  console.log('PROCESS PAGE');
   const page = await startPage(browser, settings, directory + fileName);
   const fileNameWithoutExtension = fileName.replace(/\.[^/.]+$/, '');
   const extension = '.png';
