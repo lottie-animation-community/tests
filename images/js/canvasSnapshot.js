@@ -19,6 +19,7 @@ const snapshot = (canvas, container, width, height) => {
     canvasElement.width,
     canvasElement.height,
   );
+  return canvasElement;
 };
 
 export default snapshot;

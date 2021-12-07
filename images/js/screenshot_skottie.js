@@ -1,5 +1,6 @@
 import canvasSnapshot from './canvasSnapshot.js'; // eslint-disable-line import/extensions
 import wait from './wait.js'; // eslint-disable-line import/extensions
+import puppeteerHelper from './puppeteerHelper.js'; // eslint-disable-line import/extensions
 
 const loadSkottieModule = async () => {
   const canvasKit = await window.CanvasKitInit({
@@ -43,6 +44,7 @@ const createSkottiePlayer = async (canvasKit, animationData, canvas, assets) => 
       animationData.w * devicePixelRatio,
       animationData.h * devicePixelRatio,
     );
+    skcanvas.clear(canvasKit.Color(0, 0, 0, 0.0));
     animation.render(skcanvas, bounds);
     surface.flush();
   };
@@ -56,16 +58,31 @@ const iterateFrames = async (player, animationData, canvas, renderSettings) => {
   let currentFrame = 0;
   const sampleRate = renderSettings.sampleRate > 0 ? renderSettings.sampleRate : 1;
   const totalFrames = animationData.op - animationData.ip;
+  const width = animationData.w * renderSettings.resolution;
+  const height = animationData.h * renderSettings.resolution;
   while (currentFrame < totalFrames) {
+    // Disabling rule because execution can't be parallelized
+    /* eslint-disable no-await-in-loop */
     player.goToAndStop(currentFrame);
-    canvasSnapshot(
+    const element = canvasSnapshot(
       canvas,
       snapshotsContainer,
-      animationData.w * renderSettings.resolution,
-      animationData.h * renderSettings.resolution,
+      width,
+      height,
     );
-    await wait(1); // eslint-disable-line no-await-in-loop
+    if (Number(renderSettings.individualAssets) === 0) {
+      await wait(1); // eslint-disable-line no-await-in-loop
+    } else {
+      await puppeteerHelper.submitAndWaitForResponse(
+        currentFrame,
+        currentFrame === totalFrames - 1,
+        width,
+        height,
+      );
+      element.remove();
+    }
     currentFrame += 1 / sampleRate;
+    /* eslint-enable no-await-in-loop */
   }
 };
 
