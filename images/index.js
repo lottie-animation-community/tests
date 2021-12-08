@@ -55,7 +55,7 @@ const getSettings = async () => {
     {
       name: 'individualAssets',
       alias: 'i',
-      type: (value) => ([0, 1].includes(Number(value)) ? Number(value) : 1),
+      type: (value) => ([0, 1].includes(+value) ? +value : 1),
       description: 'export as individual assets',
     },
   ];

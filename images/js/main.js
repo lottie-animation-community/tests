@@ -28,11 +28,10 @@ const start = async () => {
   window._finished = true; // eslint-disable-line no-underscore-dangle
 };
 
-window.startProcess = () => {
+window.startProcess = async () => {
   try {
-    start();
+    await start();
   } catch (err) {
-    console.log('ERROR'); // eslint-disable-line no-console
-    console.log(err.message); // eslint-disable-line no-console
+    console.log('ERROR', err.message); // eslint-disable-line no-console
   }
 };

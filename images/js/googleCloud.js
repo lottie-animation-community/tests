@@ -3,7 +3,7 @@ const { Storage } = require('@google-cloud/storage');
 const bucketName = 'gs://lottie-animation-community-tests';
 let storage;
 
-const initialize = () => {
+const initialize = async () => {
   try {
     const key = process.env.GOOGLE_CLOUD_STORAGE;
     const keyString = Buffer.from(key, 'base64').toString('ascii');
@@ -13,8 +13,7 @@ const initialize = () => {
       projectId: storageKey.project_id,
     });
   } catch (error) {
-    console.log('Could not initialize Google Cloud');
-    console.log(error);
+    console.log('Could not initialize Google Cloud', error); // eslint-disable-line no-console
   }
 };
 
@@ -24,8 +23,7 @@ const uploadAsset = async (filePath, destination) => {
       destination,
     });
   } catch (error) {
-    console.log('Could not upload asset to Google Cloud');
-    console.log(error);
+    console.log('Could not upload asset to Google Cloud', error); // eslint-disable-line no-console
   }
 };
 
