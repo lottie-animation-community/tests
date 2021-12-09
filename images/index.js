@@ -10,6 +10,7 @@ const fs = require('fs');
 const commandLineArgs = require('command-line-args');
 const md5File = require('md5-file');
 const { promises: { readFile } } = require('fs');
+const googleCloudHelper = require('./js/googleCloud');
 
 const examplesDirectory = '../examples/';
 const destinationDirectory = './screenshots';
@@ -54,7 +55,7 @@ const getSettings = async () => {
     {
       name: 'individualAssets',
       alias: 'i',
-      type: (value) => ([0, 1].includes(Number(value)) ? Number(value) : 0),
+      type: (value) => ([0, 1].includes(+value) ? +value : 1),
       description: 'export as individual assets',
     },
   ];
@@ -63,7 +64,7 @@ const getSettings = async () => {
     renderer: 'svg',
     resolution: 1,
     sampleRate: 1,
-    individualAssets: 0,
+    individualAssets: 1,
   };
 
   const settings = {
@@ -205,70 +206,6 @@ const startPage = async (browser, settings, path) => {
   return page;
 };
 
-const createFilmStrip = async (page, path) => {
-  await page.waitForFunction('window._finished === true', {
-    timeout: 20000,
-  });
-  await page.screenshot({
-    path,
-    fullPage: true,
-  });
-};
-
-const createBridgeHelper = async (page) => {
-  let resolveScoped;
-  const messageHandler = (event) => {
-    resolveScoped(event);
-  };
-  await page.exposeFunction('onMessageReceivedEvent', messageHandler);
-  const waitForMessage = () => new Promise((resolve) => {
-    resolveScoped = resolve;
-  });
-  const continueExecution = async () => {
-    page.evaluate(() => {
-      window.continueExecution();
-    });
-  };
-  return {
-    waitForMessage,
-    continueExecution,
-  };
-};
-
-const createIndividualAssets = async (page, path, extension) => {
-  let isLastFrame = false;
-  const bridgeHelper = await (createBridgeHelper(page));
-  while (!isLastFrame) {
-    // Disabling rule because execution can't be parallelized
-    /* eslint-disable no-await-in-loop */
-    const message = await bridgeHelper.waitForMessage();
-    await page.setViewport({
-      width: message.width,
-      height: message.height,
-    });
-    const fileNumber = message.currentFrame.toString().padStart(5, '0');
-    await page.screenshot({
-      path: `${path}_${fileNumber}${extension}`,
-      fullPage: false,
-    });
-    await bridgeHelper.continueExecution();
-    isLastFrame = message.isLast;
-    /* eslint-enable no-await-in-loop */
-  }
-};
-
-const getDirFiles = async (directory) => (
-  new Promise((resolve, reject) => {
-    fs.readdir(directory, (err, files) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(files);
-      }
-    });
-  })
-);
-
 const getFileAsString = async (path) => {
   try {
     const fileBuffer = await readFile(path);
@@ -291,15 +228,96 @@ const checkMD5Sum = async (fileName, filePath) => {
   }
 };
 
-async function processPage(browser, settings, directory, file) {
-  const page = await startPage(browser, settings, directory + file);
-  const filePath = `${destinationDirectory}/${file}`;
+const createFilmStrip = async (page, fileName, extension, renderer) => {
+  const localDestinationPath = `${destinationDirectory}/${fileName}${extension}`;
+  await page.waitForFunction('window._finished === true', {
+    timeout: 20000,
+  });
+  await page.screenshot({
+    path: localDestinationPath,
+    fullPage: true,
+  });
+  const remoteDestinationPath = `${renderer}/${fileName}${extension}`;
+  await googleCloudHelper.uploadAsset(localDestinationPath, remoteDestinationPath);
+  await checkMD5Sum(fileName, localDestinationPath);
+};
+
+const createBridgeHelper = async (page) => {
+  let resolveScoped;
+  let isProcessStarted = false;
+  const messageHandler = (event) => {
+    resolveScoped(event);
+  };
+  await page.exposeFunction('onMessageReceivedEvent', messageHandler);
+  const startProcess = async () => {
+    isProcessStarted = true;
+    page.evaluate(() => {
+      window.startProcess();
+    });
+  };
+  const waitForMessage = () => new Promise((resolve) => {
+    if (!isProcessStarted) {
+      startProcess();
+    }
+    resolveScoped = resolve;
+  });
+  const continueExecution = async () => {
+    page.evaluate(() => {
+      window.continueExecution();
+    });
+  };
+  return {
+    waitForMessage,
+    continueExecution,
+  };
+};
+
+const createIndividualAssets = async (page, fileName, extension, renderer) => {
+  const filePath = `${destinationDirectory}/${fileName}`;
+  let isLastFrame = false;
+  const bridgeHelper = await (createBridgeHelper(page));
+  while (!isLastFrame) {
+    // Disabling rule because execution can't be parallelized
+    /* eslint-disable no-await-in-loop */
+    const message = await bridgeHelper.waitForMessage();
+    await page.setViewport({
+      width: message.width,
+      height: message.height,
+    });
+    const fileNumber = message.currentFrame.toString().padStart(5, '0');
+    const localDestinationPath = `${filePath}_${fileNumber}${extension}`;
+    await page.screenshot({
+      path: localDestinationPath,
+      fullPage: false,
+    });
+    const remoteDestinationPath = `${renderer}/${fileName}_${fileNumber}${extension}`;
+    await googleCloudHelper.uploadAsset(localDestinationPath, remoteDestinationPath);
+    await bridgeHelper.continueExecution();
+    isLastFrame = message.isLast;
+    /* eslint-enable no-await-in-loop */
+  }
+};
+
+const getDirFiles = async (directory) => (
+  new Promise((resolve, reject) => {
+    fs.readdir(directory, (err, files) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(files);
+      }
+    });
+  })
+);
+
+async function processPage(browser, settings, directory, fileName) {
+  const page = await startPage(browser, settings, directory + fileName);
+  const fileNameWithoutExtension = fileName.replace(/\.[^/.]+$/, '');
   const extension = '.png';
   if (settings.individualAssets) {
-    await createIndividualAssets(page, filePath, extension);
+    await createIndividualAssets(page, fileNameWithoutExtension, extension, settings.renderer);
   } else {
-    await createFilmStrip(page, filePath + extension);
-    await checkMD5Sum(file, filePath + extension);
+    await createFilmStrip(page, fileNameWithoutExtension, extension, settings.renderer);
   }
 }
 
@@ -315,6 +333,7 @@ const iteratePages = async (browser, settings) => {
 const takeImageStrip = async () => {
   try {
     await startServer();
+    await googleCloudHelper.initialize();
     await wait(500);
     const settings = await getSettings();
     const browser = await getBrowser();
