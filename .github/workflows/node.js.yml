@@ -5,9 +5,9 @@ name: Node.js CI
 
 on:
   push:
-    branches: [ main, schema_validator, gcloud_integration ]
+    branches: [ main, schema_validator, gold_integration ]
   pull_request:
-    branches: [ main, schema_validator, gcloud_integration ]
+    branches: [ main, schema_validator, gold_integration ]
 
 jobs:
   test_schema:
@@ -43,4 +43,7 @@ jobs:
         path: ~/.npm
         key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
     - run: npm ci
-    - run: npm run validate
+#    - run: npm run validate
+    - uses: actions/checkout@master
+    - uses: actions/setup-go@v2
+    - run: go run hello.go
