@@ -48,5 +48,7 @@ jobs:
     - uses: actions/setup-go@v2
     - run: go run hello.go
     - run: echo 'hello echo'
-    - run: echo $HOME
+    - run: ls $HOME
+    - run: export GOPATH=$HOME/go
+    - run: export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
     - run: echo $GOPATH
