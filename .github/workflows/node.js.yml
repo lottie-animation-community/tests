@@ -45,3 +45,4 @@ jobs:
     - run: echo ${{ env.GOPATH }}
     - run: go version
     - run: go get go.skia.org/infra/gold-client/cmd/goldctl
+    - run: golctl
