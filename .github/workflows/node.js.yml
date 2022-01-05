@@ -35,14 +35,8 @@ jobs:
         go-version: '^1.16.4' # The Go version to download (if necessary) and use.
     - run: go run hello.go
     - run: echo 'hello echo'
-    - run: pwd
-    - run: echo ${GOPATH}
-    - run: ls ${GOPATH}
-    - run: export GOPATH=$HOME/go
-    - run: export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
+    - run: export PATH=$PATH:$GOPATH/bin
     - run: echo $PATH
-    - run: echo ${{ env.GOPATH }}
-    - run: go version
     - run: go get go.skia.org/infra/gold-client/cmd/goldctl
     - run: ${GOPATH}/bin/goldctl
     # - run: golctl
