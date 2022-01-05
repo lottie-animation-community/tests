@@ -41,4 +41,5 @@ jobs:
     - run: export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
     - run: echo $GOPATH
     - run: echo ${{ env.GOPATH }}
-    - run: go get go.skia.org/infra/gold-client/cmd/goldctl
+    - run: go version
+    # - run: go get go.skia.org/infra/gold-client/cmd/goldctl
