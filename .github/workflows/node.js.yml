@@ -10,39 +10,24 @@ on:
     branches: [ main, schema_validator, gold_integration ]
 
 jobs:
-  test_schema:
-
-    runs-on: ubuntu-latest
-
-    defaults:
-      run:
-        working-directory: ./schema
-    steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js 16.x
-      uses: actions/cache@v2
-      with:
-        path: ~/.npm
-        key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
-    - run: npm ci
-    - run: npm run validate
 
   create_snapshots:
   
     runs-on: ubuntu-latest
     env:
       GOOGLE_CLOUD_STORAGE: ${{ secrets.GOOGLE_CLOUD_STORAGE }}
+      GOPATH: ${{ github.workspace }}
     defaults:
       run:
         working-directory: ./images
     steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js 16.x
-      uses: actions/cache@v2
-      with:
-        path: ~/.npm
-        key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
-    - run: npm ci
+    # - uses: actions/checkout@v2
+    # - name: Use Node.js 16.x
+    #   uses: actions/cache@v2
+    #   with:
+    #     path: ~/.npm
+    #     key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
+    # - run: npm ci
 #    - run: npm run validate
     - uses: actions/checkout@master
     - uses: actions/setup-go@v2
@@ -55,3 +40,5 @@ jobs:
     - run: export GOPATH=$HOME/go
     - run: export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
     - run: echo $GOPATH
+    - run: go install go.skia.org/infra/gold-client/cmd/goldctl@latest
+    - run: echo ${{ env.GOPATH }}
