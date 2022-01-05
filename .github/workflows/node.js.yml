@@ -47,3 +47,6 @@ jobs:
     - uses: actions/checkout@master
     - uses: actions/setup-go@v2
     - run: go run hello.go
+    - run: echo 'hello echo'
+    - run: echo $HOME
+    - run: echo $GOPATH
