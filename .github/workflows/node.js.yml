@@ -31,6 +31,8 @@ jobs:
 #    - run: npm run validate
     - uses: actions/checkout@master
     - uses: actions/setup-go@v2
+      with:
+        go-version: '^1.16.4' # The Go version to download (if necessary) and use.
     - run: go run hello.go
     - run: echo 'hello echo'
     - run: pwd
