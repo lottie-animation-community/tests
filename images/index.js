@@ -229,6 +229,9 @@ const checkMD5Sum = async (fileName, filePath) => {
 };
 
 const createFilmStrip = async (page, fileName, extension, renderer) => {
+  page.evaluate(() => {
+    window.startProcess();
+  });
   const localDestinationPath = `${destinationDirectory}/${fileName}${extension}`;
   await page.waitForFunction('window._finished === true', {
     timeout: 20000,
