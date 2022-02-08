@@ -31,7 +31,6 @@ jobs:
     - run: echo $PATH
     - run: go get go.skia.org/infra/gold-client/cmd/goldctl
     - run: ${GOPATH}/bin/goldctl
-    - run: golctl
     - uses: actions/checkout@v2
     - name: Use Node.js 16.x
       uses: actions/cache@v2
