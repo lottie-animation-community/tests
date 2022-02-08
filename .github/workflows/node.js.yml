@@ -21,14 +21,6 @@ jobs:
       run:
         working-directory: ./images
     steps:
-    # - uses: actions/checkout@v2
-    # - name: Use Node.js 16.x
-    #   uses: actions/cache@v2
-    #   with:
-    #     path: ~/.npm
-    #     key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
-    # - run: npm ci
-#    - run: npm run validate
     - uses: actions/checkout@master
     - uses: actions/setup-go@v2
       with:
@@ -39,4 +31,12 @@ jobs:
     - run: echo $PATH
     - run: go get go.skia.org/infra/gold-client/cmd/goldctl
     - run: ${GOPATH}/bin/goldctl
+    - uses: actions/checkout@v2
+    - name: Use Node.js 16.x
+      uses: actions/cache@v2
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
+    - run: npm ci
+   - run: npm run validate
     # - run: golctl
