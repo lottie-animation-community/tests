@@ -11,6 +11,7 @@ const commandLineArgs = require('command-line-args');
 const md5File = require('md5-file');
 const { promises: { readFile } } = require('fs');
 const googleCloudHelper = require('./js/googleCloud');
+const goldHelper = require('./js/helpers/gold');
 
 const examplesDirectory = '../examples/';
 const destinationDirectory = './screenshots';
@@ -55,7 +56,7 @@ const getSettings = async () => {
     {
       name: 'individualAssets',
       alias: 'i',
-      type: (value) => ([0, 1].includes(+value) ? +value : 1),
+      type: (value) => ([0, 1].includes(+value) ? +value : 0),
       description: 'export as individual assets',
     },
   ];
@@ -64,7 +65,7 @@ const getSettings = async () => {
     renderer: 'svg',
     resolution: 1,
     sampleRate: 1,
-    individualAssets: 1,
+    individualAssets: 0,
   };
 
   const settings = {
@@ -228,7 +229,7 @@ const checkMD5Sum = async (fileName, filePath) => {
   }
 };
 
-const createFilmStrip = async (page, fileName, extension, renderer) => {
+const createFilmStrip = async (page, fileName, extension /* , renderer */) => {
   page.evaluate(() => {
     window.startProcess();
   });
@@ -240,8 +241,9 @@ const createFilmStrip = async (page, fileName, extension, renderer) => {
     path: localDestinationPath,
     fullPage: true,
   });
-  const remoteDestinationPath = `${renderer}/${fileName}${extension}`;
-  await googleCloudHelper.uploadAsset(localDestinationPath, remoteDestinationPath);
+  await goldHelper.uploadImage(localDestinationPath, fileName);
+  // const remoteDestinationPath = `${renderer}/${fileName}${extension}`;
+  // await googleCloudHelper.uploadAsset(localDestinationPath, remoteDestinationPath);
   await checkMD5Sum(fileName, localDestinationPath);
 };
 
@@ -336,12 +338,14 @@ const iteratePages = async (browser, settings) => {
 const takeImageStrip = async () => {
   try {
     await startServer();
+    await goldHelper.initialize();
     await googleCloudHelper.initialize();
     await wait(500);
     const settings = await getSettings();
     const browser = await getBrowser();
     await iteratePages(browser, settings);
     await browser.close();
+    await goldHelper.finalize();
     process.exit(0);
   } catch (error) {
     console.log(error); // eslint-disable-line no-console
