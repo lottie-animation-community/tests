@@ -1,7 +1,7 @@
 const execToPromise = require('../utils/execToPromise');
 const writeToPromise = require('../utils/writeToPromise');
 
-const goldPath = '${GOPATH}/bin/goldctl';
+const goldPath = 'goldctl';
 
 const writeSecret = async () => {
   try {
