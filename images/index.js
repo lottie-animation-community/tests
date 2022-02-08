@@ -229,7 +229,7 @@ const checkMD5Sum = async (fileName, filePath) => {
   }
 };
 
-const createFilmStrip = async (page, fileName, extension /* , renderer */) => {
+const createFilmStrip = async (page, fileName, extension) => {
   page.evaluate(() => {
     window.startProcess();
   });
@@ -242,8 +242,6 @@ const createFilmStrip = async (page, fileName, extension /* , renderer */) => {
     fullPage: true,
   });
   await goldHelper.uploadImage(localDestinationPath, fileName);
-  // const remoteDestinationPath = `${renderer}/${fileName}${extension}`;
-  // await googleCloudHelper.uploadAsset(localDestinationPath, remoteDestinationPath);
   await checkMD5Sum(fileName, localDestinationPath);
 };
 
