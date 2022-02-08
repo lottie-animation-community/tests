@@ -349,6 +349,7 @@ const takeImageStrip = async () => {
     process.exit(0);
   } catch (error) {
     console.log(error); // eslint-disable-line no-console
+    process.exit(0);
   }//
 };
 

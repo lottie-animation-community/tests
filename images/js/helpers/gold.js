@@ -5,6 +5,8 @@ const goldPath = 'goldctl';
 
 const writeSecret = async () => {
   try {
+    console.log('process.env.GOOGLE_SECRET', process.env.GOOGLE_SECRET);
+    console.log('process.env.GOOGLE_SECRET2', process.env.GOOGLE_SECRET2);
     const googleEnvSecret = process.env.GOOGLE_SECRET;
     const keyString = Buffer.from(googleEnvSecret, 'base64').toString('ascii');
     await writeToPromise('./secret.json', keyString);
