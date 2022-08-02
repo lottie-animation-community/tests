@@ -8,7 +8,9 @@ const buildRenderSettings = async (searchParams) => {
     resolution: 1,
     individualAssets: 0,
     // path: 'lottie.json',
-    path: '../examples/image.json',
+    path: '../examples/rectangle.json',
+    grid: null,
+    frames: 0,
   };
   searchParams.forEach((value, key) => {
     defaultValues[key] = value;
@@ -27,7 +29,6 @@ const start = async () => {
   }
   window._finished = true; // eslint-disable-line no-underscore-dangle
 };
-
 window.startProcess = async () => {
   try {
     await start();
