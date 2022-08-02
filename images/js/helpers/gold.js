@@ -6,7 +6,7 @@ const writeSecret = async () => {
   try {
     const googleEnvSecret = process.env.GOOGLE_CLOUD_STORAGE;
     const keyString = Buffer.from(googleEnvSecret, 'base64').toString('ascii');
-    console.log('KEYSTRING', keyString.length);
+    console.log('KEYSTRING ==> ', keyString.length);
     await writeToPromise('./secret.json', keyString);
     return true;
   } catch (err) {
