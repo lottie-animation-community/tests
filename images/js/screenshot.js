@@ -60,7 +60,7 @@ const calculateFrameAdvance = (renderSettings, anim) => {
 
 const calculateGridSize = (renderSettings) => {
   const grid = renderSettings.grid?.split('x');
-  if (grid.length && grid.length === 2) {
+  if (grid && grid.length && grid.length === 2) {
     const width = parseInt(grid[0]);
     const height = parseInt(grid[1]);
     if (typeof width === 'number' && isFinite(width) && typeof height === 'number' && isFinite(height)) {
