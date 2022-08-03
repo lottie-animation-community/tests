@@ -30,13 +30,18 @@ const initialize = async () => {
   const githubCommit = process.env.GITHUB_SHA;
   // initalizes the process
   await execToPromise(`goldctl imgtest init --work-dir ./tmp --commit ${githubCommit} --keys-file ./keys.json --instance lottie-animation-community --bucket lottie-animation-community-tests`);
+  console.log('IMAGE INIT');
+  console.log(`goldctl imgtest init --work-dir ./tmp --commit ${githubCommit} --keys-file ./keys.json --instance lottie-animation-community --bucket lottie-animation-community-tests`);
 };
 
 const uploadImage = async (imagePath, testName) => {
   try {
     // Adds an image to the current imgtest process.
     // the --test-name argument should be different for each animation
-    await execToPromise(`goldctl imgtest add --work-dir ./tmp --test-name "${testName}" --png-file "${imagePath}"`);
+    const response = await execToPromise(`goldctl imgtest add --work-dir ./tmp --test-name "${testName}" --png-file "${imagePath}"`);
+    console.log('IMAGE UPLOAD SUCCESS');
+    console.log(response);
+    console.log(`goldctl imgtest add --work-dir ./tmp --test-name "${testName}" --png-file "${imagePath}"`);
   } catch (error) {
     console.log('IMAGE UPLOAD ERROR', error);
     //
