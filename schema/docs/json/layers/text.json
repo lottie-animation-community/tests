@@ -236,7 +236,7 @@
                         "$ref": "#/properties/value"
                       },
                       {
-                        "$ref": "#/properties/valueKeyframed"
+                        "$ref": "#/properties/multiDimensionalKeyframed"
                       }
                     ],
                     "type": "object"
@@ -249,7 +249,7 @@
                         "$ref": "#/properties/value"
                       },
                       {
-                        "$ref": "#/properties/valueKeyframed"
+                        "$ref": "#/properties/multiDimensionalKeyframed"
                       }
                     ],
                     "type": "object"
@@ -262,7 +262,7 @@
                         "$ref": "#/properties/value"
                       },
                       {
-                        "$ref": "#/properties/valueKeyframed"
+                        "$ref": "#/properties/multiDimensionalKeyframed"
                       }
                     ],
                     "type": "object"
@@ -275,7 +275,7 @@
                         "$ref": "#/properties/value"
                       },
                       {
-                        "$ref": "#/properties/valueKeyframed"
+                        "$ref": "#/properties/multiDimensionalKeyframed"
                       }
                     ],
                     "type": "object"
@@ -288,7 +288,7 @@
                         "$ref": "#/properties/value"
                       },
                       {
-                        "$ref": "#/properties/valueKeyframed"
+                        "$ref": "#/properties/multiDimensionalKeyframed"
                       }
                     ],
                     "type": "object"
@@ -327,7 +327,7 @@
                         "$ref": "#/properties/value"
                       },
                       {
-                        "$ref": "#/properties/valueKeyframed"
+                        "$ref": "#/properties/multiDimensionalKeyframed"
                       }
                     ],
                     "type": "object"
@@ -340,7 +340,7 @@
                         "$ref": "#/properties/value"
                       },
                       {
-                        "$ref": "#/properties/valueKeyframed"
+                        "$ref": "#/properties/multiDimensionalKeyframed"
                       }
                     ],
                     "type": "object"
@@ -353,7 +353,7 @@
                         "$ref": "#/properties/value"
                       },
                       {
-                        "$ref": "#/properties/valueKeyframed"
+                        "$ref": "#/properties/multiDimensionalKeyframed"
                       }
                     ],
                     "type": "object"
@@ -366,7 +366,7 @@
                         "$ref": "#/properties/value"
                       },
                       {
-                        "$ref": "#/properties/valueKeyframed"
+                        "$ref": "#/properties/multiDimensionalKeyframed"
                       }
                     ],
                     "type": "object"
@@ -391,7 +391,7 @@
                         "$ref": "#/properties/value"
                       },
                       {
-                        "$ref": "#/properties/valueKeyframed"
+                        "$ref": "#/properties/multiDimensionalKeyframed"
                       }
                     ],
                     "type": "number"
@@ -404,7 +404,7 @@
                         "$ref": "#/properties/value"
                       },
                       {
-                        "$ref": "#/properties/valueKeyframed"
+                        "$ref": "#/properties/multiDimensionalKeyframed"
                       }
                     ],
                     "type": "number"
@@ -417,7 +417,7 @@
                         "$ref": "#/properties/value"
                       },
                       {
-                        "$ref": "#/properties/valueKeyframed"
+                        "$ref": "#/properties/multiDimensionalKeyframed"
                       }
                     ],
                     "type": "number"
@@ -453,7 +453,7 @@
                         "$ref": "#/properties/value"
                       },
                       {
-                        "$ref": "#/properties/valueKeyframed"
+                        "$ref": "#/properties/multiDimensionalKeyframed"
                       }
                     ],
                     "type": "number"
@@ -466,7 +466,7 @@
                         "$ref": "#/properties/value"
                       },
                       {
-                        "$ref": "#/properties/valueKeyframed"
+                        "$ref": "#/properties/multiDimensionalKeyframed"
                       }
                     ],
                     "type": "number"
@@ -479,7 +479,7 @@
                         "$ref": "#/properties/value"
                       },
                       {
-                        "$ref": "#/properties/valueKeyframed"
+                        "$ref": "#/properties/multiDimensionalKeyframed"
                       }
                     ],
                     "type": "number"

@@ -6,7 +6,6 @@ const writeSecret = async () => {
   try {
     const googleEnvSecret = process.env.GOOGLE_CLOUD_STORAGE;
     const keyString = Buffer.from(googleEnvSecret, 'base64').toString('ascii');
-    // console.log('KEYSTRING ===> ', keyString);
     await writeToPromise('./secret.json', keyString);
     return true;
   } catch (err) {
@@ -31,6 +30,8 @@ const initialize = async () => {
   const githubCommit = process.env.GITHUB_SHA;
   // initalizes the process
   await execToPromise(`goldctl imgtest init --work-dir ./tmp --commit ${githubCommit} --keys-file ./keys.json --instance lottie-animation-community --bucket lottie-animation-community-tests`);
+  console.log('IMAGE INITIALIZE');
+  console.log(`goldctl imgtest init --work-dir ./tmp --commit ${githubCommit} --keys-file ./keys.json --instance lottie-animation-community --bucket lottie-animation-community-tests`);
 };
 
 const uploadImage = async (imagePath, testName) => {
@@ -38,9 +39,9 @@ const uploadImage = async (imagePath, testName) => {
     // Adds an image to the current imgtest process.
     // the --test-name argument should be different for each animation
     const response = await execToPromise(`goldctl imgtest add --work-dir ./tmp --test-name "${testName}" --png-file "${imagePath}"`);
-    console.log('IMAGE UPLOADED');
-    console.log(`goldctl imgtest add --work-dir ./tmp --test-name "${testName}" --png-file "${imagePath}"`);
+    console.log('IMAGE UPLOAD SUCCESS');
     console.log(response);
+    console.log(`goldctl imgtest add --work-dir ./tmp --test-name "${testName}" --png-file "${imagePath}"`);
   } catch (error) {
     console.log('IMAGE UPLOAD ERROR', error);
     //
@@ -50,9 +51,13 @@ const uploadImage = async (imagePath, testName) => {
 const finalize = async () => {
   try {
     // finalizes the process
-    await execToPromise('goldctl imgtest finalize --work-dir ./tmp');
+    const response = await execToPromise('goldctl imgtest finalize --work-dir ./tmp');
+    console.log('IMAGE FINALIZE');
+    console.log(response);
   } catch (error) {
     //
+    console.log('FINALIZE ERROR');
+    console.log(error);
   }
 };
 
