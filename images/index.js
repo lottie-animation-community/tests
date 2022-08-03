@@ -59,6 +59,24 @@ const getSettings = async () => {
       type: (value) => ([0, 1].includes(+value) ? +value : 0),
       description: 'export as individual assets',
     },
+    {
+      name: 'grid',
+      alias: 'g',
+      type: (value) => (value || ''),
+      description: 'Grid size expressed in pixels (for example 1000x1000)',
+    },
+    {
+      name: 'frames',
+      alias: 'm',
+      type: (val) => {
+        const value = Number(val);
+        if (Number.isNaN(value) || value <= 1) {
+          return 0;
+        }
+        return value;
+      },
+      description: 'Number of frames to render',
+    },
   ];
 
   const defaultSettings = {
@@ -200,6 +218,8 @@ const startPage = async (browser, settings, path) => {
 &sampleRate=${settings.sampleRate}\
 &resolution=${settings.resolution}\
 &individualAssets=${settings.individualAssets}\
+&grid=${settings.grid}\
+&frames=${settings.frames}\
 &path=${encodeURIComponent(path)}`;
   const page = await browser.newPage();
   page.on('console', (msg) => console.log('PAGE LOG:', msg.text())); // eslint-disable-line no-console

@@ -38,7 +38,9 @@ const uploadImage = async (imagePath, testName) => {
     // Adds an image to the current imgtest process.
     // the --test-name argument should be different for each animation
     await execToPromise(`goldctl imgtest add --work-dir ./tmp --test-name "${testName}" --png-file "${imagePath}"`);
+    console.log('IMAGE UPLOADED');
   } catch (error) {
+    console.log('IMAGE UPLOAD ERROR', error);
     //
   }
 };
