@@ -11,6 +11,7 @@ const commandLineArgs = require('command-line-args');
 const md5File = require('md5-file');
 const { promises: { readFile } } = require('fs');
 const googleCloudHelper = require('./js/googleCloud');
+const goldHelper = require('./js/helpers/gold');
 
 const examplesDirectory = '../examples/';
 const destinationDirectory = './screenshots';
@@ -55,8 +56,26 @@ const getSettings = async () => {
     {
       name: 'individualAssets',
       alias: 'i',
-      type: (value) => ([0, 1].includes(+value) ? +value : 1),
+      type: (value) => ([0, 1].includes(+value) ? +value : 0),
       description: 'export as individual assets',
+    },
+    {
+      name: 'grid',
+      alias: 'g',
+      type: (value) => (value || ''),
+      description: 'Grid size expressed in pixels (for example 1000x1000)',
+    },
+    {
+      name: 'frames',
+      alias: 'm',
+      type: (val) => {
+        const value = Number(val);
+        if (Number.isNaN(value) || value <= 1) {
+          return 0;
+        }
+        return value;
+      },
+      description: 'Number of frames to render',
     },
   ];
 
@@ -64,7 +83,7 @@ const getSettings = async () => {
     renderer: 'svg',
     resolution: 1,
     sampleRate: 1,
-    individualAssets: 1,
+    individualAssets: 0,
   };
 
   const settings = {
@@ -199,6 +218,8 @@ const startPage = async (browser, settings, path) => {
 &sampleRate=${settings.sampleRate}\
 &resolution=${settings.resolution}\
 &individualAssets=${settings.individualAssets}\
+&grid=${settings.grid}\
+&frames=${settings.frames}\
 &path=${encodeURIComponent(path)}`;
   const page = await browser.newPage();
   page.on('console', (msg) => console.log('PAGE LOG:', msg.text())); // eslint-disable-line no-console
@@ -228,7 +249,10 @@ const checkMD5Sum = async (fileName, filePath) => {
   }
 };
 
-const createFilmStrip = async (page, fileName, extension, renderer) => {
+const createFilmStrip = async (page, fileName, extension) => {
+  page.evaluate(() => {
+    window.startProcess();
+  });
   const localDestinationPath = `${destinationDirectory}/${fileName}${extension}`;
   await page.waitForFunction('window._finished === true', {
     timeout: 20000,
@@ -237,8 +261,7 @@ const createFilmStrip = async (page, fileName, extension, renderer) => {
     path: localDestinationPath,
     fullPage: true,
   });
-  const remoteDestinationPath = `${renderer}/${fileName}${extension}`;
-  await googleCloudHelper.uploadAsset(localDestinationPath, remoteDestinationPath);
+  await goldHelper.uploadImage(localDestinationPath, fileName);
   await checkMD5Sum(fileName, localDestinationPath);
 };
 
@@ -333,15 +356,18 @@ const iteratePages = async (browser, settings) => {
 const takeImageStrip = async () => {
   try {
     await startServer();
+    await goldHelper.initialize();
     await googleCloudHelper.initialize();
     await wait(500);
     const settings = await getSettings();
     const browser = await getBrowser();
     await iteratePages(browser, settings);
     await browser.close();
+    await goldHelper.finalize();
     process.exit(0);
   } catch (error) {
     console.log(error); // eslint-disable-line no-console
+    process.exit(0);
   }//
 };
 

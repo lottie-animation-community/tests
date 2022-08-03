@@ -5,38 +5,27 @@ name: Node.js CI
 
 on:
   push:
-    branches: [ main, schema_validator, gcloud_integration ]
+    branches: [ main, gold_integration ]
   pull_request:
-    branches: [ main, schema_validator, gcloud_integration ]
+    branches: [ main, gold_integration ]
 
 jobs:
-  test_schema:
-
-    runs-on: ubuntu-latest
-
-    defaults:
-      run:
-        working-directory: ./schema
-    steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js 16.x
-      uses: actions/cache@v2
-      with:
-        path: ~/.npm
-        key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
-    - run: npm ci
-    - run: npm run validate
 
   create_snapshots:
   
     runs-on: ubuntu-latest
     env:
       GOOGLE_CLOUD_STORAGE: ${{ secrets.GOOGLE_CLOUD_STORAGE }}
+      GOPATH: ${{ github.workspace }}
     defaults:
       run:
         working-directory: ./images
     steps:
     - uses: actions/checkout@v2
+    - uses: actions/setup-go@v2
+      with:
+        go-version: '^1.16.4' # The Go version to download (if necessary) and use.
+    - run: go install go.skia.org/infra/gold-client/cmd/goldctl@latest
     - name: Use Node.js 16.x
       uses: actions/cache@v2
       with:
