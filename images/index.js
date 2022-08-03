@@ -363,6 +363,7 @@ const takeImageStrip = async () => {
     const browser = await getBrowser();
     await iteratePages(browser, settings);
     await browser.close();
+    await wait(1000 * 60 * 5); // Delay for 5 minutes to make sure gold has enough time to poll the commit
     await goldHelper.finalize();
     process.exit(0);
   } catch (error) {
