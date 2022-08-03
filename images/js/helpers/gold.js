@@ -51,9 +51,13 @@ const uploadImage = async (imagePath, testName) => {
 const finalize = async () => {
   try {
     // finalizes the process
-    await execToPromise('goldctl imgtest finalize --work-dir ./tmp');
+    const response = await execToPromise('goldctl imgtest finalize --work-dir ./tmp');
+    console.log('IMAGE FINALIZE');
+    console.log(response);
   } catch (error) {
     //
+    console.log('FINALIZE ERROR');
+    console.log(error);
   }
 };
 
