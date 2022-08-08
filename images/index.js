@@ -353,17 +353,23 @@ const iteratePages = async (browser, settings) => {
   }
 };
 
+const buildGoldKeys = (settings) => ({
+  renderer: settings.renderer,
+  resolution: settings.resolution,
+});
+
 const takeImageStrip = async () => {
   try {
     await startServer();
-    await goldHelper.initialize();
+    const settings = await getSettings();
+    await goldHelper.initialize(buildGoldKeys(settings));
     await googleCloudHelper.initialize();
     await wait(500);
-    const settings = await getSettings();
     const browser = await getBrowser();
     await iteratePages(browser, settings);
     await browser.close();
-    await wait(1000 * 60 * 5); // Delay for 5 minutes to make sure gold has enough time to poll the commit
+    // Delay for 5 minutes to make sure gold has enough time to poll the commit
+    await wait(1000 * 60 * 5);
     await goldHelper.finalize();
     process.exit(0);
   } catch (error) {
