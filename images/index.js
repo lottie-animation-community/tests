@@ -355,7 +355,7 @@ const iteratePages = async (browser, settings) => {
 
 const buildGoldKeys = (settings) => ({
   renderer: settings.renderer,
-  resolution: settings.resolution,
+  resolution: settings.resolution.toString(),
 });
 
 const takeImageStrip = async () => {
