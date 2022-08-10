@@ -127,12 +127,6 @@ const filesData = [
 
   },
   {
-    path: '/js/settingsFormatter.js',
-    filePath: './js/settingsFormatter.js',
-    type: 'js',
-
-  },
-  {
     path: '/js/puppeteerHelper.js',
     filePath: './js/puppeteerHelper.js',
     type: 'js',
