@@ -127,6 +127,12 @@ const filesData = [
 
   },
   {
+    path: '/js/settingsFormatter.js',
+    filePath: './js/settingsFormatter.js',
+    type: 'js',
+
+  },
+  {
     path: '/js/puppeteerHelper.js',
     filePath: './js/puppeteerHelper.js',
     type: 'js',
@@ -362,7 +368,7 @@ async function processPage(browser, settings, directory, fileName) {
     await createIndividualAssets(page, fileNameWithoutExtension, extension, settings.renderer);
   } else {
     const grid = calculateGridSize(settings.grid);
-    await createFilmStrip(page, fileNameWithoutExtension, extension, grid);
+      await createFilmStrip(page, fileNameWithoutExtension, extension, grid);
   }
 }
 
