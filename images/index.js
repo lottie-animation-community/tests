@@ -249,11 +249,32 @@ const checkMD5Sum = async (fileName, filePath) => {
   }
 };
 
-const createFilmStrip = async (page, fileName, extension) => {
+const calculateGridSize = (gridParam) => {
+  const grid = gridParam?.split('x');
+  if (grid && grid.length && grid.length === 2) {
+    const width = parseInt(grid[0]);
+    const height = parseInt(grid[1]);
+    if (typeof width === 'number' && isFinite(width) && typeof height === 'number' && isFinite(height)) {
+      return {
+        width,
+        height,
+      }
+    }
+  }
+  return null;
+}
+
+const createFilmStrip = async (page, fileName, extension, grid) => {
   page.evaluate(() => {
     window.startProcess();
   });
   const localDestinationPath = `${destinationDirectory}/${fileName}${extension}`;
+  if (grid) {
+    await page.setViewport({
+      width: grid.width,
+      height: grid.height,
+    })
+  }
   await page.waitForFunction('window._finished === true', {
     timeout: 20000,
   });
@@ -340,7 +361,8 @@ async function processPage(browser, settings, directory, fileName) {
   if (settings.individualAssets) {
     await createIndividualAssets(page, fileNameWithoutExtension, extension, settings.renderer);
   } else {
-    await createFilmStrip(page, fileNameWithoutExtension, extension, settings.renderer);
+    const grid = calculateGridSize(settings.grid);
+    await createFilmStrip(page, fileNameWithoutExtension, extension, settings.renderer, grid);
   }
 }
 
