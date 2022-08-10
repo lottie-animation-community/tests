@@ -33,3 +33,4 @@ jobs:
         key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
     - run: npm ci
     - run: npm run validate
+    - run: npm run validate-skottie
