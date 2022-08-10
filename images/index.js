@@ -270,9 +270,10 @@ const createFilmStrip = async (page, fileName, extension, grid) => {
   });
   const localDestinationPath = `${destinationDirectory}/${fileName}${extension}`;
   if (grid) {
+    console.log(grid)
     await page.setViewport({
-      width: grid.width,
-      height: grid.height,
+      width: grid.width || 1000,
+      height: grid.height || 1000,
     })
   }
   await page.waitForFunction('window._finished === true', {
