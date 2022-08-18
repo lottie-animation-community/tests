@@ -1,0 +1,20 @@
+name: Build Schema
+on:
+    push:
+    workflow_dispatch:
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v2
+      -
+        name: Setup
+        run: |
+            sudo apt update -q
+            sudo apt install -yy python
+      -
+        name: Schema
+        run: |
+            python schema/schema-merge.py

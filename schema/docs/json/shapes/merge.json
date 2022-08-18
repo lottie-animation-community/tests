@@ -1,27 +1,30 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema#",
-  "type": "object",
-  "properties": {
-    "mn": {
-      "title": "Match Name",
-      "description": "After Effect's Match Name. Used for expressions.",
-      "type": "string"
-    },
-    "nm": {
-      "title": "Name",
-      "description": "After Effect's Name. Used for expressions.",
-      "type": "string"
-    },
-    "ty": {
-      "title": "Type",
-      "description": "Shape content type. THIS FEATURE IS NOT SUPPORTED. It's exported because if you export it, they will come.",
-      "type": "string",
-      "const": "mm"
-    },
-    "mm": {
-      "title": "Merge Mode",
-      "description": "Merge Mode",
-      "type": "number"
-    }
-  }
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "title": "Merge",
+    "caniuse": "shape-merge-path",
+    "description": "Boolean operator on shapes",
+    "allOf": [
+        {
+            "$ref": "#/$defs/shapes/shape-element"
+        },
+        {
+            "type": "object",
+            "properties": {
+                "ty": {
+                    "title": "Shape Type",
+                    "type": "string",
+                    "const": "mm"
+                },
+                "mm": {
+                    "title": "Merge Mode",
+                    "$ref": "#/$defs/constants/merge-mode",
+                    "default": 1
+                }
+            },
+            "required": [
+                "ty"
+            ]
+        }
+    ]
 }

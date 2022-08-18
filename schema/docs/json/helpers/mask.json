@@ -1,80 +1,44 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema#",
-  "type": "object",
-  "properties": {
-    "inv": {
-      "title": "Inverted",
-      "description": "Inverted Mask flag",
-      "type": "boolean",
-      "default": false
-    },
-    "nm": {
-      "title": "Name",
-      "description": "Mask name. Used for expressions and effects.",
-      "type": "string"
-    },
-    "pt": {
-      "title": "Points",
-      "description": "Mask vertices",
-      "oneOf": [
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "title": "Mask",
+    "caniuse": "mask",
+    "description": "Bezier shape used to mask/clip a layer",
+    "allOf": [
         {
-          "$ref": "#/properties/shape"
+            "$ref": "#/$defs/helpers/visual-object"
         },
         {
-          "$ref": "#/properties/shapeKeyframed"
+            "type": "object",
+            "properties": {
+                "inv": {
+                    "title": "Inverted",
+                    "caniuse": "mask-inverted",
+                    "type": "boolean",
+                    "default": false
+                },
+                "pt": {
+                    "title": "Shape",
+                    "$ref": "#/$defs/animated-properties/shape-property"
+                },
+                "o": {
+                    "title": "Opacity",
+                    "caniuse": "mask-opacity",
+                    "$ref": "#/$defs/animated-properties/value"
+                },
+                "mode": {
+                    "title": "Mode",
+                    "caniuse": "mask-modes",
+                    "$ref": "#/$defs/constants/mask-mode",
+                    "default": "i"
+                },
+                "x": {
+                    "title": "Dilate",
+                    "caniuse": "mask-expansion",
+                    "$ref": "#/$defs/animated-properties/value"
+                }
+            },
+            "required": []
         }
-      ],
-      "type": "object"
-    },
-    "o": {
-      "title": "Opacity",
-      "description": "Mask opacity.",
-      "type": "object",
-      "oneOf": [
-        {
-          "$ref": "#/properties/value"
-        },
-        {
-          "$ref": "#/properties/multiDimensionalKeyframed"
-        }
-      ],
-      "default": {"a":0, "k":100}
-    },
-    "mode": {
-      "title": "Mode",
-      "description": "Mask mode. Not all mask types are supported.",
-      "type": "string",
-      "oneOf": [
-        {
-          "standsFor": "None",
-          "const": "n"
-        },
-        {
-          "standsFor": "Additive",
-          "const": "a"
-        },
-        {
-          "standsFor": "Subtract",
-          "const": "s"
-        },
-        {
-          "standsFor": "Intersect",
-          "const": "i"
-        },
-        {
-          "standsFor": "Lighten",
-          "const": "l"
-        },
-        {
-          "standsFor": "Darken",
-          "const": "d"
-        },
-        {
-          "standsFor": "Difference",
-          "const": "f"
-        }
-      ],
-      "default": "a"
-    }
-  }
+    ]
 }

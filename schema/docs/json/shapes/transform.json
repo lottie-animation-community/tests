@@ -1,108 +1,27 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema#",
-  "type": "object",
-  "properties": {
-    "nm": {
-      "title": "Name",
-      "description": "After Effect's Name. Used for expressions.",
-      "type": "string"
-    },
-    "a": {
-      "title": "Anchor Point",
-      "description": "Shape Transform Anchor Point",
-      "oneOf": [
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "title": "Transform Shape",
+    "description": "Group transform",
+    "allOf": [
         {
-          "$ref": "#/properties/multiDimensional"
+            "$ref": "#/$defs/shapes/shape-element"
         },
         {
-          "$ref": "#/properties/multiDimensionalKeyframed"
-        }
-      ],
-      "type": "object"
-    },
-    "p": {
-      "title": "Position",
-      "description": "Shape Transform Position",
-      "oneOf": [
-        {
-          "$ref": "#/properties/multiDimensional"
+            "$ref": "#/$defs/helpers/transform"
         },
         {
-          "$ref": "#/properties/multiDimensionalKeyframed"
+            "type": "object",
+            "properties": {
+                "ty": {
+                    "title": "Shape Type",
+                    "type": "string",
+                    "const": "tr"
+                }
+            },
+            "required": [
+                "ty"
+            ]
         }
-      ],
-      "type": "object"
-    },
-    "s": {
-      "title": "Scale",
-      "description": "Shape Transform Scale",
-      "oneOf": [
-        {
-          "$ref": "#/properties/multiDimensional"
-        },
-        {
-          "$ref": "#/properties/multiDimensionalKeyframed"
-        }
-      ],
-      "type": "object"
-    },
-    "r": {
-      "title": "Rotation",
-      "description": "Shape Transform Rotation",
-      "oneOf": [
-        {
-          "$ref": "#/properties/value"
-        },
-        {
-          "$ref": "#/properties/multiDimensionalKeyframed"
-        }
-      ],
-      "type": "object"
-    },
-    "o": {
-      "title": "Opacity",
-      "description": "Shape Transform Opacity",
-      "oneOf": [
-        {
-          "$ref": "#/properties/value"
-        },
-        {
-          "$ref": "#/properties/multiDimensionalKeyframed"
-        }
-      ],
-      "type": "object"
-    },
-    "sk": {
-      "title": "Skew",
-      "description": "Shape Transform Skew",
-      "oneOf": [
-        {
-          "$ref": "#/properties/value"
-        },
-        {
-          "$ref": "#/properties/multiDimensionalKeyframed"
-        }
-      ],
-      "type": "object"
-    },
-    "sa": {
-      "title": "Skew Axis",
-      "description": "Shape Transform Skew Axis",
-      "oneOf": [
-        {
-          "$ref": "#/properties/value"
-        },
-        {
-          "$ref": "#/properties/multiDimensionalKeyframed"
-        }
-      ],
-      "type": "object"
-    },
-    "ty": {
-      "title": "Type",
-      "description": "Tranform type.",
-      "type": "string",
-      "const": "tr"
-    }
-  }
+    ]
 }
