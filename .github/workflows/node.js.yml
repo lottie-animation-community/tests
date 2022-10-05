@@ -4,10 +4,10 @@
 name: Node.js CI
 
 on:
-  push:
-    branches: [ main, gold_integration ]
-  pull_request:
-    branches: [ main, gold_integration ]
+  # push:
+    # branches: [ main, gold_integration ]
+  # pull_request:
+    # branches: [ main, gold_integration ]
   repository_dispatch:
 
 jobs:
@@ -34,4 +34,6 @@ jobs:
         key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
     - run: npm ci
     - run: npm run validate
+      if: ${{ github.event && github.event.client_payload.player == 'lottie-web' }}
     - run: npm run validate-skottie
+      if: ${{ github.event && github.event.client_payload.player == 'skottie' }}
