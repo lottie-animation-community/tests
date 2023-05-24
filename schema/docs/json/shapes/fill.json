@@ -1,49 +1,38 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema#",
-  "type": "object",
-  "properties": {
-    "mn": {
-      "title": "Match Name",
-      "description": "After Effect's Match Name. Used for expressions.",
-      "type": "string"
-    },
-    "nm": {
-      "title": "Name",
-      "description": "After Effect's Name. Used for expressions.",
-      "type": "string"
-    },
-    "ty": {
-      "title": "Type",
-      "description": "Shape content type.",
-      "type": "string",
-      "const": "fl"
-    },
-    "o": {
-      "title": "Opacity",
-      "description": "Fill Opacity",
-      "oneOf": [
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "title": "Fill",
+    "description": "Solid fill color",
+    "caniuse": "shape-fill",
+    "allOf": [
         {
-          "$ref": "#/properties/value"
+            "$ref": "#/$defs/shapes/shape-element"
         },
         {
-          "$ref": "#/properties/multiDimensionalKeyframed"
+            "type": "object",
+            "properties": {
+                "ty": {
+                    "title": "Shape Type",
+                    "type": "string",
+                    "const": "fl"
+                },
+                "o": {
+                    "title": "Opacity",
+                    "description": "Opacity, 100 means fully opaque",
+                    "$ref": "#/$defs/animated-properties/value"
+                },
+                "c": {
+                    "title": "Color",
+                    "$ref": "#/$defs/animated-properties/color-value"
+                },
+                "r": {
+                    "title": "Fill Rule",
+                    "$ref": "#/$defs/constants/fill-rule"
+                }
+            },
+            "required": [
+                "ty", "c", "o"
+            ]
         }
-      ],
-      "type": "object"
-    },
-    "c": {
-      "title": "Color",
-      "description": "Fill Color",
-      "oneOf": [
-        {
-          "$ref": "#/properties/multiDimensional"
-        },
-        {
-          "$ref": "#/properties/multiDimensionalKeyframed"
-        }
-      ],
-      "type": "object"
-    }
-  },
-  "required": ["ty", "o", "c"]
+    ]
 }
